@@ -34,7 +34,7 @@ const Home: React.FC<HomeProps> = ({ tasks, onNavigate }) => {
   };
 
   return (
-    <div className="pb-32 pt-4 px-4 space-y-6 bg-surface min-h-full">
+    <div className="pb-24 pt-4 px-4 space-y-6 bg-surface min-h-full">
       {/* Header */}
       <div className="flex justify-between items-end">
         <div>
@@ -134,9 +134,6 @@ const Home: React.FC<HomeProps> = ({ tasks, onNavigate }) => {
           );
         })}
       </div>
-      
-      {/* End of list spacer */}
-      <div className="h-8"></div>
     </div>
   );
 };

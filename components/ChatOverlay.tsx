@@ -92,7 +92,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ onBack }) => {
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="輸入訊息..." 
-                className="flex-1 bg-slate-100 border-none rounded-full px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+                className="flex-1 bg-slate-100 border-none rounded-full px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-primary/20 outline-none"
             />
             <button 
                 onClick={handleSend}
