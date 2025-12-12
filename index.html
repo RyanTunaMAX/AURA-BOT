@@ -1,13 +1,133 @@
 
 <!DOCTYPE html>
 <html lang="zh-TW">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>AURA BOT</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>AURA BOT</title>
+
+  <!-- PWA Settings: Native App Feel -->
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="AURA BOT">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- 
+      =======================================================================
+      【APP 圖示與 PWA 設定區】
+      此腳本經過優化，會立即注入 Manifest 以供 Android 辨識，
+      並非同步生成 PNG 以供 iOS 使用。
+      =======================================================================
+    -->
+  <script>
+    (function() {
+      // 1. 您的 SVG 原始碼 (Logo)
+      // 修改重點：
+      // 1. 加入 <rect fill="white"> 作為背景，且覆蓋整個 viewBox 範圍
+      // 2. 調整 viewBox 為 -500 -500 2200 2200 (加大數值 = 鏡頭拉遠 = Logo 變小)
+      const APP_ICON_SVG = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-500 -500 2200 2200">
+  <!-- 白底背景 (必須配合 viewBox 大小) -->
+  <rect x="-500" y="-500" width="2200" height="2200" fill="#ffffff"/>
+  <g id="AuraLogo1">
+        <path d="M848.36,989.15c-16.35,17.47-32.52,40.69-49.57,56.66-2.22,2.08-3.27,4.15-6.89,3.33-3.79-41.9.04-81.13,13.48-121.13,34.76-103.45,122.52-174.93,213.53-227.72,58.02-33.65,127.93-58.69,167.83-114.97,5.46-.19,12.14,46.4,12.56,53.02,10.17,162.48-91.9,282.82-209.46,379.08-63.01,51.6-134,92.15-188.35,153.63-1.36,1.53-2.98,4.81-7.34,4.81-.15-10.39-2.16-17.5,0-32.81,3.73-26.42,22.44-69.59,35.82-93.16,38.39-67.66,97.8-125.6,151.98-180.65" fill="#1a5538" />
+        <path d="M351.64,989.15c16.35,17.47,32.52,40.69,49.57,56.66,2.22,2.08,3.27,4.15,6.89,3.33,3.79-41.9-.04-81.13-13.48-121.13-34.76-103.45-122.52-174.93-213.53-227.72-58.02-33.65-127.93-58.69-167.83-114.97-5.46-.19-12.14,46.4-12.56,53.02-10.17,162.48,91.9,282.82,209.46,379.08,63.01,51.6,134,92.15,188.35,153.63,1.36,1.53,2.98,4.81,7.34,4.81.15-10.39,2.16-17.5,0-32.81-3.73-26.42-22.44-69.59-35.82-93.16-38.39-67.66-97.8-125.6-151.98-180.65" fill="#1a5538" />
+        <path d="M850.15,654.06v-15.69c0-12.61,8.33-24.31,20.68-26.86,39.66-8.18,73.31-45.3,82.79-98.27,20.08-112.24-72.73-200.74-148.34-140.61-19.7,15.67-46.59,59.86-46.59,90.99v600.03c0,15.36-12.45,27.81-27.81,27.81h0c-15.36,0-27.81-12.45-27.81-27.81l-.05-585.55c8.79-218.08,230.76-269.56,295.3-75.66,41.1,123.49-20.12,257.61-115.05,279-17.05,3.84-33.1-9.92-33.1-27.39Z" fill="#367a58" />
+        <path d="M471.45,1091.47h-.3c-17.2,0-31.13-13.94-31.13-31.14l.06-501.43c-.98-50.91-31.98-97.31-81.45-111.93-90.17-26.64-171.43,58.55-140.45,147.56,14.24,40.92,49.97,67.95,91.28,74.58,14.91,2.39,25.33,16.18,25.33,31.28h0c0,19.28-17.36,33.75-36.42,30.82-129.94-19.95-199.39-176.58-110-287.38,102.16-126.64,307.72-55.11,314.26,105.12l-.06,511.39c0,17.19-13.94,31.13-31.13,31.13Z" fill="#367a58" />
+        <path d="M435.01,358.75c-136.44,5.92-208-178.57-120.33-291.2,99.64-127.44,302.15-62.91,315.75,96.19v896.52c0,17.25-14,31.25-31.25,31.25s-31.45-14-31.45-31.25l.2-883.73c-2.43-103.49-132.91-153-200.49-73.05-60.47,71.43-15.02,176.75,69.6,189.13l3.36.39c17.31,2.3,31.34,14.83,31.34,33.09,0,15.02-9.48,29.52-22.73,31.45-3.48.51-10.49,1.07-14,1.22Z" fill="#367a58" />
+  </g>
+</svg>`;
+
+      // Helper: 清除舊標籤 (非常重要，避免預設 icon 衝突)
+      const removeTags = () => {
+        const tags = document.querySelectorAll('link[rel*="icon"], link[rel="apple-touch-icon"], link[rel="manifest"]');
+        tags.forEach(tag => tag.remove());
+      };
+
+      // Helper: 建立 Link 標籤
+      const createLink = (rel, href) => {
+        const link = document.createElement('link');
+        link.rel = rel;
+        link.href = href;
+        document.head.appendChild(link);
+      };
+
+      // 1. 立即清除可能由構建工具注入的標籤
+      removeTags();
+
+      // 2. 準備 SVG Data URI
+      // Android Chrome 支援 SVG 圖標，我們直接使用它來確保載入速度
+      const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(APP_ICON_SVG.trim());
+
+      // 3. 立即注入 Favicon 與 Manifest (這對 Android 很重要，不能等)
+      createLink('icon', svgUrl);
+
+      const manifest = {
+        "name": "AURA BOT",
+        "short_name": "AURA BOT",
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": "#ffffff",
+        "theme_color": "#ffffff",
+        "orientation": "portrait",
+        "icons": [
+          {
+            "src": svgUrl,
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+          },
+          {
+            "src": svgUrl,
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+          },
+          {
+            "src": svgUrl,
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+          }
+        ]
+      };
+
+      const manifestString = JSON.stringify(manifest);
+      const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString);
+      createLink('manifest', manifestUrl);
+
+      // 4. 非同步生成 PNG (為了 iOS 支援)
+      // iOS 不支援 SVG 圖標，所以我們在背景轉換
+      window.addEventListener('load', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, 512, 512);
+          const pngUrl = canvas.toDataURL('image/png');
+          
+          // 移除舊的(如果有)並加入 PNG 版的 apple-touch-icon
+          const oldApple = document.querySelector('link[rel="apple-touch-icon"]');
+          if(oldApple) oldApple.remove();
+          createLink('apple-touch-icon', pngUrl);
+          
+          console.log("AURA BOT: iOS Icon generated.");
+        };
+        img.src = svgUrl;
+      });
+
+      console.log("AURA BOT: Android PWA setup complete.");
+
+    })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
         theme: {
           extend: {
             colors: {
@@ -40,25 +160,33 @@
           },
         },
       }
-    </script>
-    <style>
-      body {
-        background-color: #f6fdf9; /* Surface color */
-        -webkit-tap-highlight-color: transparent;
-        user-select: none; /* Prevent text selection during long press */
-      }
-      /* Hide scrollbar for Chrome, Safari and Opera */
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      /* Hide scrollbar for IE, Edge and Firefox */
-      .no-scrollbar {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-      }
-    </style>
+  </script>
+  <style>
+    body {
+      background-color: #f6fdf9;
+      /* Surface color */
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      /* Prevent text selection during long press */
+      /* iOS safe area padding handled in components generally, but ensure body fills screen */
+      overscroll-behavior-y: none; /* Prevent bounce effect */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
+    }
+  </style>
   <script type="importmap">
-{
+    {
   "imports": {
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
@@ -71,7 +199,9 @@
 }
 </script>
 </head>
-  <body>
-    <div id="root"></div>
-  </body>
+
+<body>
+  <div id="root"></div>
+</body>
+
 </html>
