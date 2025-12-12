@@ -1,0 +1,5 @@
+{
+  "name": "AURA BOT",
+  "description": "An intelligent hospital companion app integrating health tasks, indoor navigation, and robotic air quality management using AURA BOT.",
+  "requestFramePermissions": []
+}
