@@ -14,115 +14,106 @@
   <meta name="apple-mobile-web-app-title" content="AURA BOT">
   <meta name="mobile-web-app-capable" content="yes">
 
-  <!-- 
-      =======================================================================
-      【APP 圖示與 PWA 設定區】
-      此腳本經過優化，會立即注入 Manifest 以供 Android 辨識，
-      並非同步生成 PNG 以供 iOS 使用。
-      =======================================================================
-    -->
   <script>
     (function() {
-      // 1. 您的 SVG 原始碼 (Logo)
-      // 修改重點：
-      // 1. 加入 <rect fill="white"> 作為背景，且覆蓋整個 viewBox 範圍
-      // 2. 調整 viewBox 為 -500 -500 2200 2200 (加大數值 = 鏡頭拉遠 = Logo 變小)
-      const APP_ICON_SVG = 
+      // 修正：使用反引號包裹 SVG 字串，並加入白色背景矩形
+      // 調整 viewBox 為 -300 -300 1800 1800 讓 Logo 稍微縮小一點，留白比較好看
+      const APP_ICON_SVG = `
   <svg
-    viewBox="0 0 1195.09 1086.05"
-    className="w-full h-full text-primary overflow-visible"
-    fill="currentColor"
+    viewBox="-300 -300 1800 1800"
     xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMid meet"
   >
-    <g id="AuraLogoGroup" transform="translate(-50, 30)">
+    <!-- 加入白色圓角背景，確保在主畫面不會透明 -->
+    <rect x="-300" y="-300" width="1800" height="1800" fill="white" />
+    <g id="AuraLogoGroup" transform="translate(-50, 30)" fill="#367a58">
       <path d="M152.58,584.62c129.03,80.05,325.18,74.36,470.87,73.8l300.66-1.16c81.27-.31,157.58,38.88,194.05,116.26,30.86,65.48,31.18,144.31-3.1,208.29-53.68,100.21-176.59,133.11-272.28,76.97-51.73-30.35-84.1-85.86-89.39-147.41-1.68-19.58,8.76-35.04,26.26-37.97,16.49-2.77,35,8.95,36.4,28.71,2.94,41.49,22.51,77.3,57.79,99.63,40.71,25.77,91.41,26.15,135.39,1.05,37.81-21.58,64.65-64.11,68.32-113.4,4.08-54.8-16.81-108.73-61.26-140.11-26.32-18.58-57.43-28.7-89.43-29.39l-127.83-2.75-259.58-.66c-53.59-.14-104.2-3.32-157.01-8.65-47.9-4.83-93.02-13.58-139.34-26.87-95.81-27.47-176.31-87.73-230.41-174.13-3.83-6.11-8.28-8.75-12.69-17.18,112.92,39.77,221.87,62.89,343.21,55.48,101.49-6.2,206.51-40.49,273.62-124.54-1.34-30.67-2.62-59.05.11-89.57,10.96-122.33,72.58-218.24,177.48-275.24C910.77-7.42,1068.6-10.93,1195.09,15.64c-60.83,63-79.4,154.62-101.85,237.9-12.88,47.77-30.68,92.3-58.25,132.64-81.01,118.53-227.99,136-355.56,101.63,24.81-34.66,47.03-71.97,75.35-103.12,57.24-24.57,118.86-30.66,179.92-38.72-51.15-12.84-100.78-8.28-149.2-2.78,111.79-126.3,61.11-105.05,229.43-137.5-33.47-6.69-69.96-5.89-103.59-1.1l106.02-98.96c-73.83,37.74-134.34,91.59-194.77,147.76-2.71-39.79,6.18-77.51,10.46-118.43-30.06,45.73-29.96,101.9-44.36,151.67l-93.1,114.49c-14.68,18.06-27.99,34.29-42.53,52.23-44.07,54.4-100.94,92.62-165.44,116.55-48,17.81-95.66,25-146.72,28.64-63.48,4.53-123.4-3.27-188.31-13.92Z" />
       <path d="M883.06,944.55c26.37,6.33,54.01,3.86,73.37-17.52,18.29-20.19,20.58-52.95,4.22-75.4-10.56-14.48-27.88-22.49-45.91-22.86l-274.83-5.6c-120.76-2.46-305.84-13.57-402.91-90.44,160.33,44.76,323.17,38.6,487.39,38.62l176.58.02c32.95,0,64.22,7.51,89.49,30.03,35.65,31.75,43.13,88.52,15.9,129.21-27.58,41.22-87.03,48.73-123.31,13.93Z" />
-    </g>;
+    </g>
+  </svg>`;
 
-      // Helper: 清除舊標籤 (非常重要，避免預設 icon 衝突)
-      const removeTags = () => {
-        const tags = document.querySelectorAll('link[rel*="icon"], link[rel="apple-touch-icon"], link[rel="manifest"]');
-        tags.forEach(tag => tag.remove());
-      };
+  // Helper: 清除舊標籤 (非常重要，避免預設 icon 衝突)
+  const removeTags = () => {
+  const tags = document.querySelectorAll('link[rel*="icon"], link[rel="apple-touch-icon"], link[rel="manifest"]');
+  tags.forEach(tag => tag.remove());
+  };
 
-      // Helper: 建立 Link 標籤
-      const createLink = (rel, href) => {
-        const link = document.createElement('link');
-        link.rel = rel;
-        link.href = href;
-        document.head.appendChild(link);
-      };
+  // Helper: 建立 Link 標籤
+  const createLink = (rel, href) => {
+  const link = document.createElement('link');
+  link.rel = rel;
+  link.href = href;
+  document.head.appendChild(link);
+  };
 
-      // 1. 立即清除可能由構建工具注入的標籤
-      removeTags();
+  // 1. 立即清除可能由構建工具注入的標籤
+  removeTags();
 
-      // 2. 準備 SVG Data URI
-      // Android Chrome 支援 SVG 圖標，我們直接使用它來確保載入速度
-      const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(APP_ICON_SVG.trim());
+  // 2. 準備 SVG Data URI
+  // Android Chrome 支援 SVG 圖標，我們直接使用它來確保載入速度
+  const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(APP_ICON_SVG.trim());
 
-      // 3. 立即注入 Favicon 與 Manifest (這對 Android 很重要，不能等)
-      createLink('icon', svgUrl);
+  // 3. 立即注入 Favicon 與 Manifest (這對 Android 很重要，不能等)
+  createLink('icon', svgUrl);
 
-      const manifest = {
-        "name": "AURA BOT",
-        "short_name": "AURA BOT",
-        "start_url": ".",
-        "display": "standalone",
-        "background_color": "#ffffff",
-        "theme_color": "#ffffff",
-        "orientation": "portrait",
-        "icons": [
-          {
-            "src": svgUrl,
-            "sizes": "any",
-            "type": "image/svg+xml",
-            "purpose": "any maskable"
-          },
-          {
-            "src": svgUrl,
-            "sizes": "512x512",
-            "type": "image/svg+xml",
-            "purpose": "any maskable"
-          },
-          {
-            "src": svgUrl,
-            "sizes": "192x192",
-            "type": "image/svg+xml",
-            "purpose": "any maskable"
-          }
-        ]
-      };
+  const manifest = {
+  "name": "AURA BOT",
+  "short_name": "AURA BOT",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait",
+  "icons": [
+  {
+  "src": svgUrl,
+  "sizes": "any",
+  "type": "image/svg+xml",
+  "purpose": "any maskable"
+  },
+  {
+  "src": svgUrl,
+  "sizes": "512x512",
+  "type": "image/svg+xml",
+  "purpose": "any maskable"
+  },
+  {
+  "src": svgUrl,
+  "sizes": "192x192",
+  "type": "image/svg+xml",
+  "purpose": "any maskable"
+  }
+  ]
+  };
 
-      const manifestString = JSON.stringify(manifest);
-      const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString);
-      createLink('manifest', manifestUrl);
+  const manifestString = JSON.stringify(manifest);
+  const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString);
+  createLink('manifest', manifestUrl);
 
-      // 4. 非同步生成 PNG (為了 iOS 支援)
-      // iOS 不支援 SVG 圖標，所以我們在背景轉換
-      window.addEventListener('load', () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 512;
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0, 512, 512);
-          const pngUrl = canvas.toDataURL('image/png');
-          
-          // 移除舊的(如果有)並加入 PNG 版的 apple-touch-icon
-          const oldApple = document.querySelector('link[rel="apple-touch-icon"]');
-          if(oldApple) oldApple.remove();
-          createLink('apple-touch-icon', pngUrl);
-          
-          console.log("AURA BOT: iOS Icon generated.");
-        };
-        img.src = svgUrl;
-      });
+  // 4. 非同步生成 PNG (為了 iOS 支援)
+  // iOS 不支援 SVG 圖標，所以我們在背景轉換
+  window.addEventListener('load', () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.onload = () => {
+  ctx.drawImage(img, 0, 0, 512, 512);
+  const pngUrl = canvas.toDataURL('image/png');
 
-      console.log("AURA BOT: Android PWA setup complete.");
+  // 移除舊的(如果有)並加入 PNG 版的 apple-touch-icon
+  const oldApple = document.querySelector('link[rel="apple-touch-icon"]');
+  if(oldApple) oldApple.remove();
+  createLink('apple-touch-icon', pngUrl);
 
-    })();
+  console.log("AURA BOT: iOS Icon generated.");
+  };
+  img.src = svgUrl;
+  });
+
+  console.log("AURA BOT: Android PWA setup complete.");
+
+  })();
   </script>
 
   <script src="https://cdn.tailwindcss.com"></script>
